@@ -113,6 +113,15 @@ bool label_is_safe(const int& l, Graph& G, const int& index, const vector<int>& 
     return true; 
 }
 
+bool checkNodeValid(int one, int two, vector<int>& labeling){
+
+    if( one > 0 and labeling[two]){
+        if( abs(one-labeling[two]) >=3) return true;
+        else return false;
+    }
+    return true;
+}
+
 bool backtrack(Graph& G, vector<int>& labeling, const int& index, const int& maxLabel) 
 {
     if(is_a_solution(labeling)) {
@@ -121,7 +130,11 @@ bool backtrack(Graph& G, vector<int>& labeling, const int& index, const int& max
     }
     else {
         for(int l = 0; l <= maxLabel; ++l) {
-            if(label_is_safe(l, G, index, labeling)) {
+            bool check = index == 15 || index == 17 ?checkNodeValid(l, (index==17 ? 10 : 12), labeling) : true;
+            
+           // if(index == 15 || index == 17 ) std::cout<<" >>>"<<index<< " " << l<< " "<<labeling[(index==17 ? 10 : 12)]<<" Check"<<check;
+
+            if(label_is_safe(l, G, index, labeling) && check) {
                 labeling[index] = l;
                 if(backtrack(G, labeling, index+1, maxLabel))
                     return true;
