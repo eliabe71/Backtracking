@@ -26,10 +26,18 @@ void create_graph_from_file(Graph&, const string&);
 void generate_labeling(Graph&, const int&);
 // -------------------------------------------------------
 
+int K = 2;
+
+#define LABER_ONE 8*K+7
+#define LABER_TWO 8*K+9
+#define VERIFY_ONE 8*K+2
+#define VERIFY_TWO 8*K+4
+
+
 int main() 
 {
     Graph G;
-    int maximum_label { 7 }; // the maximum label used to construct the labeling
+    int maximum_label { 14 }; // the maximum label used to construct the labeling
     create_graph_from_file(G, "edges.txt"); 
     generate_labeling(G, maximum_label); 
     return 0;
@@ -95,6 +103,11 @@ bool label_is_safe(const int& l, Graph& G, const int& index, const vector<int>& 
     return true; 
 }
 
+bool checkNode(int laber, int verify){
+    if(abs(laber-verify) >=3) return true;
+    return false;
+}
+
 void backtrack(Graph& G, vector<int>& labeling, const int& index, const int& maxLabel) 
 {
     if(is_a_solution(labeling)) {
@@ -102,7 +115,8 @@ void backtrack(Graph& G, vector<int>& labeling, const int& index, const int& max
     }
     else {
         for(int l = 0; l <= maxLabel; ++l) {
-            if(label_is_safe(l, G, index, labeling)) {
+            bool check = (index == LABER_ONE || index == LABER_TWO) ? checkNode(l,(index == LABER_ONE ? labeling[VERIFY_TWO]: labeling[VERIFY_ONE])) : true;
+            if(label_is_safe(l, G, index, labeling) && check) {
                 labeling[index] = l;
                 backtrack(G, labeling, index+1, maxLabel);
                 labeling[index] = -1; //backtrack
